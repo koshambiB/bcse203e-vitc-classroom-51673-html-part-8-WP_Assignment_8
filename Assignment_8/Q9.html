@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Countdown Timer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+            background-color: #f0f0f0;
+        }
+
+        .timer {
+            font-size: 4em;
+            margin: 20px;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            display: inline-block;
+        }
+
+        .controls {
+            margin: 20px;
+        }
+
+        input {
+            font-size: 1.2em;
+            padding: 5px;
+            width: 100px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+        }
+
+        button {
+            font-size: 1.2em;
+            padding: 8px 20px;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+
+        #timer.warning {
+            color: #ff4444;
+        }
+    </style>
+</head>
+
+<body>
+    <h2>Countdown Timer</h2>
+    <div class="controls">
+        <input type="number" id="timeInput" min="1" value="60" placeholder="Seconds">
+        <button onclick="startTimer()" id="startBtn">Start</button>
+        <button onclick="pauseTimer()" id="pauseBtn" disabled>Pause</button>
+        <button onclick="resetTimer()" id="resetBtn">Reset</button>
+    </div>
+    <div class="timer" id="timer">00:00</div>
+
+    <script>
+        let timeLeft;
+        let timerId = null;
+        let isPaused = false;
+        const timerDisplay = document.getElementById('timer');
+        const timeInput = document.getElementById('timeInput');
+        const startBtn = document.getElementById('startBtn');
+        const pauseBtn = document.getElementById('pauseBtn');
+        const resetBtn = document.getElementById('resetBtn');
+
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+        function createBeepSound() {
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+
+            oscillator.type = 'sine';
+            oscillator.frequency.value = 440;
+            gainNode.gain.value = 0.5;
+
+            oscillator.start();
+            setTimeout(() => {
+                oscillator.stop();
+            }, 500);
+        }
+
+        function formatTime(seconds) {
+            const minutes = Math.floor(seconds / 60);
+            const remainingSeconds = seconds % 60;
+            return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+        }
+
+        function startTimer() {
+            if (!timerId && !isPaused) {
+                timeLeft = parseInt(timeInput.value);
+            }
+
+            if (timeLeft > 0) {
+                timerId = setInterval(() => {
+                    timeLeft--;
+                    timerDisplay.textContent = formatTime(timeLeft);
+
+                    if (timeLeft <= 10) {
+                        timerDisplay.classList.add('warning');
+                    }
+
+                    if (timeLeft === 0) {
+                        clearInterval(timerId);
+                        createBeepSound();
+                        startBtn.disabled = false;
+                        pauseBtn.disabled = true;
+                        timerId = null;
+                    }
+                }, 1000);
+
+                startBtn.disabled = true;
+                pauseBtn.disabled = false;
+                timeInput.disabled = true;
+                isPaused = false;
+            }
+        }
+
+        function pauseTimer() {
+            clearInterval(timerId);
+            timerId = null;
+            startBtn.disabled = false;
+            pauseBtn.disabled = true;
+            isPaused = true;
+        }
+
+        function resetTimer() {
+            clearInterval(timerId);
+            timerId = null;
+            timeLeft = parseInt(timeInput.value);
+            timerDisplay.textContent = formatTime(timeLeft);
+            timerDisplay.classList.remove('warning');
+            startBtn.disabled = false;
+            pauseBtn.disabled = true;
+            timeInput.disabled = false;
+            isPaused = false;
+        }
+
+        resetTimer();
+    </script>
+</body>
+
+</html>

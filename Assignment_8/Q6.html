@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Clock</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 50px;
+        }
+
+        .clock {
+            font-size: 4em;
+            font-family: monospace;
+            padding: 20px;
+            background: #333;
+            color: #fff;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="clock" id="clock">00:00:00</div>
+    <button onclick="toggleFormat()">Toggle 12/24 Hour Format</button>
+
+    <script>
+        let is24Hour = true;
+
+        function updateClock() {
+            const now = new Date();
+            let hours = now.getHours();
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            const seconds = now.getSeconds().toString().padStart(2, '0');
+            let timeString;
+
+            if (!is24Hour) {
+                const period = hours >= 12 ? 'PM' : 'AM';
+                hours = hours % 12 || 12;
+                timeString = `${hours}:${minutes}:${seconds} ${period}`;
+            } else {
+                timeString = `${hours.toString().padStart(2, '0')}:${minutes}:${seconds}`;
+            }
+
+            document.getElementById('clock').textContent = timeString;
+        }
+
+        function toggleFormat() {
+            is24Hour = !is24Hour;
+            updateClock();
+        }
+
+        setInterval(updateClock, 1000);
+        updateClock();
+    </script>
+</body>
+
+</html>

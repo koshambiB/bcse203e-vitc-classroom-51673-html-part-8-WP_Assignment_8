@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Word Counter</title>
+</head>
+<body>
+    <textarea id="textBox" oninput="countWords()"></textarea>
+    <p>Words: <span id="wordTotal">0</span></p>
+
+    <script>
+        function countWords() {
+            let words = document.getElementById("textBox").value.trim().split(/\s+/);
+            document.getElementById("wordTotal").textContent = words.length;
+        }
+    </script>
+</body>
+</html>

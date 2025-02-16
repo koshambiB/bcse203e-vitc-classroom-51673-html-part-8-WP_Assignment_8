@@ -1,1 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Table Creator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #f4f4f4;
+            margin: 0;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        input, button {
+            padding: 10px;
+            margin: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: white;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+        }
+        .delete-btn {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .delete-btn:hover {
+            background-color: #c82333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Dynamic Table Creator</h1>
+        <div>
+            <input type="number" id="rows" min="1" placeholder="Number of rows">
+            <input type="number" id="cols" min="1" placeholder="Number of columns">
+            <button onclick="generateTable()">Generate Table</button>
+        </div>
+        <div id="tableContainer"></div>
+    </div>
+
+    <script>
+        function generateTable() {
+            const rows = document.getElementById('rows').value;
+            const cols = document.getElementById('cols').value;
+            const tableContainer = document.getElementById('tableContainer');
+
+            if (rows > 0 && cols > 0) {
+                const table = document.createElement('table');
+                
+                const headerRow = table.insertRow();
+                headerRow.insertCell();  
+                for (let j = 0; j < cols; j++) {
+                    const th = headerRow.insertCell();
+                    const deleteColBtn = document.createElement('button');
+                    deleteColBtn.textContent = 'Delete Column';
+                    deleteColBtn.className = 'delete-btn';
+                    deleteColBtn.onclick = () => deleteColumn(table, j + 1);
+                    th.appendChild(deleteColBtn);
+                }
+                
+                for (let i = 0; i < rows; i++) {
+                    const row = table.insertRow();
+                    const deleteCell = row.insertCell();
+                    const deleteRowBtn = document.createElement('button');
+                    deleteRowBtn.textContent = 'Delete Row';
+                    deleteRowBtn.className = 'delete-btn';
+                    deleteRowBtn.onclick = () => deleteRow(table, row);
+                    deleteCell.appendChild(deleteRowBtn);
+                    
+                    for (let j = 0; j < cols; j++) {
+                        const cell = row.insertCell();
+                        cell.textContent = `Cell ${i+1},${j+1}`;
+                    }
+                }
+                
+                tableContainer.innerHTML = '';
+                tableContainer.appendChild(table);
+            } else {
+                alert('Please enter valid numbers for rows and columns.');
+            }
+        }
+
+        function deleteRow(table, row) {
+            table.deleteRow(row.rowIndex);
+        }
+
+        function deleteColumn(table, colIndex) {
+            for (let i = 0; i < table.rows.length; i++) {
+                table.rows[i].deleteCell(colIndex);
+            }
+        }
+    </script>
+</body>
+</html>
 
